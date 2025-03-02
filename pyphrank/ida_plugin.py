@@ -240,10 +240,10 @@ class IDAPlugin(idaapi.plugin_t):
 		settings.PTRSIZE = utils.get_pointer_size()
 
 		self.actions.append(
-			ItemAnalyzer("phrank::item_analyzer", "analyze item under cursor and its dependencies", self)
+			ItemAnalyzer("phrank::item_analyzer", "analyze item under cursor and its dependencies", self, "Shift-A")
 		)
 		self.actions.append(
-			TFGPrinter("phrank::tfg_printer", "print TypeFlowGraph for variable/function under cursor", self)
+			TFGPrinter("phrank::tfg_printer", "print TypeFlowGraph for variable/function under cursor", self, "Alt-T")
 		)
 		for action in self.actions:
 			action.register()
@@ -254,4 +254,7 @@ class IDAPlugin(idaapi.plugin_t):
 		return
 
 	def term(self):
+		for action in self.actions:
+			idaapi.unregister_action(action.action_name)
+		self.actions = []
 		return

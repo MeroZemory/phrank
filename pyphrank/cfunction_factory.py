@@ -33,17 +33,18 @@ class CFunctionFactory:
 		cfunc = self.cached_cfuncs.get(func_ea)
 		if isinstance(cfunc, idaapi.cfunc_t):
 			return cfunc
+		# Check if it's our sentinel value (-1) indicating a failed decompilation
+		if isinstance(cfunc, int) and cfunc == -1:
+			return None
 
 		if not settings.DECOMPILE_RECURSIVELY:
 			cfunc = utils.decompile_function(func_ea)
 			# -1 (instead of None) to cache failed decompilation
 			if cfunc is None:
-				cfunc = -1
-			self.cached_cfuncs[func_ea] = cfunc
-			if cfunc == -1:
+				self.cached_cfuncs[func_ea] = -1
 				return None
-			else:
-				return cfunc
+			self.cached_cfuncs[func_ea] = cfunc
+			return cfunc
 
 		decompilation_queue = [func_ea]
 		while len(decompilation_queue) != 0:
@@ -59,15 +60,17 @@ class CFunctionFactory:
 			if len(new_functions_to_decompile) == 0:
 				cfunc = utils.decompile_function(func_ea)
 				if cfunc is None: 
-					cfunc = -1
-				self.cached_cfuncs[func_ea] = cfunc
+					self.cached_cfuncs[func_ea] = -1
+				else:
+					self.cached_cfuncs[func_ea] = cfunc
 				decompilation_queue.pop()
 			else:
 				decompilation_queue += list(new_functions_to_decompile)
 
 		cfunc = self.cached_cfuncs.get(func_ea)
-		if cfunc == -1:
-			cfunc = None
+		# Check if it's our sentinel value (-1) indicating a failed decompilation
+		if isinstance(cfunc, int) and cfunc == -1:
+			return None
 		return cfunc
 
 	def clear_cfunc(self, func_ea:int) -> None:
