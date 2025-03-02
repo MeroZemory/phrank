@@ -22,3 +22,9 @@ Phrank helps with structure analysis and function pointers. Phrank works on top 
 ## How to use
 
 There are currently two ways to use phrank: hotkey actions (described [here](https://github.com/Mizari/phrank/wiki/Phrank-plugin-and-actions) and in comments [here](https://github.com/Mizari/phrank/blob/master/phrank_plugin.py)) and phrank api (described in docstring comments [here](https://github.com/Mizari/phrank/blob/master/phrank.py)).
+
+### Keyboard Shortcuts
+
+Phrank provides the following keyboard shortcuts:
+- `Shift-A`: Analyze item under cursor and its dependencies
+- `Alt-T`: Print TypeFlowGraph for variable/function under cursor
